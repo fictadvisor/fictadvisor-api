@@ -3,6 +3,7 @@ import { LocalAuthGuard } from '../../security/LocalGuard';
 import { AuthService } from './AuthService';
 import { RegistrationDTO, TelegramDTO } from './dto/RegistrationDTO';
 import { JwtGuard } from '../../security/JwtGuard';
+import {UpdatePasswordDTO} from "./dto/UpdatePasswordDTO";
 
 @Controller({
   version: '2',
@@ -35,7 +36,10 @@ export class AuthController {
 
   @UseGuards(JwtGuard)
   @Put('/updatePassword')
-  async updatePassword(@Body() body, @Request() req) {
+  async updatePassword(
+      @Body() body: UpdatePasswordDTO,
+      @Request() req
+    ){
     const tokens = await this.authService.updatePassword(body, req.user);
 
     if (!tokens) {

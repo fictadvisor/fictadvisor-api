@@ -3,6 +3,8 @@ import { UserService } from './UserService';
 import { TelegramGuard } from '../../security/TelegramGuard';
 import { JwtGuard } from '../../security/JwtGuard';
 import { ApproveDTO } from './dto/ApproveDTO';
+import {CreateSuperheroDTO} from "./dto/CreateSuperheroDTO";
+import {CreateRoleDTO} from "./dto/CreateRoleDTO";
 
 @Controller({
   version: '2',
@@ -35,7 +37,7 @@ export class UserController {
   @Post('/superhero')
   async createSuperhero(
     @Request() req,
-    @Body() body,
+    @Body() body: CreateSuperheroDTO
   ) {
     return this.userService.createSuperhero(req.user.id, body);
   }
@@ -52,7 +54,7 @@ export class UserController {
   @UseGuards(TelegramGuard)
   @Post('/roles')
   createRole(
-    @Body() body,
+    @Body() body: CreateRoleDTO,
   ) {
     return this.userService.createRole(body);
   }
