@@ -12,12 +12,18 @@ import { DisciplineService } from "../discipline/DisciplineService";
 import { DisciplineRepository } from '../discipline/DisciplineRepository';
 import { NotEnoughAnswersException } from '../../utils/exceptions/NotEnoughAnswersException';
 import { ExcessiveAnswerException } from '../../utils/exceptions/ExcessiveAnswerException';
+import { DateService } from "../../utils/date/DateService";
+import { PrismaService } from "../../database/PrismaService";
+import { ConfigService } from "@nestjs/config";
+import { WrongTimeException } from "../../utils/exceptions/WrongTimeException";
 
 @Injectable()
 export class DisciplineTeacherService {
   constructor(
     @Inject(forwardRef(() => TeacherService))
     private teacherService: TeacherService,
+    private prisma: PrismaService,
+    private dateService: DateService,
     private disciplineTeacherRepository: DisciplineTeacherRepository,
     private disciplineTypeRepository: DisciplineTypeRepository,
     @Inject(forwardRef(() => DisciplineTypeService))
@@ -26,9 +32,11 @@ export class DisciplineTeacherService {
     private pollService: PollService,
     private questionAnswerRepository: QuestionAnswerRepository,
     private disciplineRepository: DisciplineRepository,
+    private config: ConfigService,
     @Inject(forwardRef(() => DisciplineService))
     private disciplineService: DisciplineService,
-  ) {}
+  ) {
+  }
 
   async getGroup(id: string) {
     const discipline = await this.disciplineTeacherRepository.getDiscipline(id);
@@ -54,6 +62,7 @@ export class DisciplineTeacherService {
     await this.checkExcessiveQuestions(disciplineTeacherId, answers);
     await this.checkRequiredQuestions(disciplineTeacherId, answers);
     await this.checkAnsweredQuestions(disciplineTeacherId, answers, user.id);
+    await this.CheckSendingTime();
 
     for (const answer of answers) {
       this.questionAnswerRepository.create({
@@ -71,7 +80,7 @@ export class DisciplineTeacherService {
     const categories = this.pollService.sortByCategories(questions);
     return {
       teacher: `${teacher.lastName} ${teacher.firstName} ${teacher.middleName}`,
-      subject : subject.name,
+      subject: subject.name,
       categories,
     };
   }
@@ -84,7 +93,7 @@ export class DisciplineTeacherService {
   async checkRequiredQuestions(disciplineTeacherId: string, questions: CreateAnswerDTO[]) {
     const dbQuestions = await this.getUniqueQuestions(disciplineTeacherId);
     for (const question of dbQuestions) {
-      if(question.isRequired && !questions.some((q) => q.questionId === question.id)) {
+      if (question.isRequired && !questions.some((q) => q.questionId === question.id)) {
         throw new NotEnoughAnswersException();
       }
     }
@@ -93,7 +102,7 @@ export class DisciplineTeacherService {
   async checkExcessiveQuestions(disciplineTeacherId: string, questions: CreateAnswerDTO[]) {
     const dbQuestions = await this.getUniqueQuestions(disciplineTeacherId);
     for (const question of questions) {
-      if(!dbQuestions.some((q) => (q.questionId === question.questionId))) {
+      if (!dbQuestions.some((q) => (q.questionId === question.questionId))) {
         throw new ExcessiveAnswerException();
       }
     }
@@ -111,8 +120,41 @@ export class DisciplineTeacherService {
       userId,
       questionId,
     });
-    if(dbAnswer) {
+    if (dbAnswer) {
       throw new AlreadyAnsweredException(questionId);
+    }
+  }
+
+  async getPollTimeBorders() {
+    const currentDate = await this.dateService.getCurrentYearAndSemester();
+    const startDate = await this.prisma.dateVar.findUnique({
+      where:{
+        name: `START_POLL_${currentDate.year}_${currentDate.semester}`,
+      },
+      select:{
+        date: true,
+      },
+    });
+    const endDate = await this.prisma.dateVar.findUnique({
+      where:{
+        name: `END_POLL_${currentDate.year}_${currentDate.semester}`,
+      },
+      select:{
+        date: true,
+      },
+    });
+    return {
+      startDate: startDate.date,
+      endDate: endDate.date,
+    };
+  }
+  async CheckSendingTime() {
+    const dateBorders = await this.getPollTimeBorders();
+    const closingPollTime = dateBorders.startDate.getTime();
+    const openingPollTime = dateBorders.endDate.getTime();
+    const currentTime = new Date().getTime();
+    if (currentTime > closingPollTime || currentTime < openingPollTime) {
+      throw new WrongTimeException();
     }
   }
 }
