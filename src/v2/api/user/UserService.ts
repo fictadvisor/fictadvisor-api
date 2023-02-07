@@ -80,15 +80,16 @@ export class UserService {
   }
 
   async requestNewGroup(id: string, {groupId, isCaptain}: GroupRequestDTO) {
-    await this.studentRepository.update(id, {state: State.PENDING});
-    
     const user = await this.userRepository.get(id);
-    const student = {
-      firstName: user.student.firstName,
-      middleName: user.student.middleName,
-      lastName: user.student.lastName,
+    if(user.state === State.DECLINED || user.state === State.PENDING){
+      await this.studentRepository.update(id, {state: State.PENDING}); 
+      const student = {
+        firstName: user.student.firstName,
+        middleName: user.student.middleName,
+        lastName: user.student.lastName,
+      }
+      await this.authService.verify(id, user.telegramId, {groupId, isCaptain, ...student})
     }
-    await this.authService.verify(id, user.telegramId, {groupId, isCaptain, ...student})
   }
 
   async deleteUser(userId: string) {
