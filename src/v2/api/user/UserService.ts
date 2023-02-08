@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { GroupService } from '../group/GroupService';
 import { DisciplineService } from '../discipline/DisciplineService';
 import { GiveRoleDTO } from './dto/GiveRoleDTO';
@@ -81,7 +81,10 @@ export class UserService {
 
   async requestNewGroup(id: string, {groupId, isCaptain}: GroupRequestDTO) {
     const user = await this.userRepository.get(id);
-    if(user.state === State.DECLINED || user.state === State.PENDING){
+    if(user.state === State.APPROVED) {
+      throw new ForbiddenException();
+    }
+    else {
       await this.studentRepository.update(id, {state: State.PENDING}); 
       const student = {
         firstName: user.student.firstName,
