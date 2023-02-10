@@ -90,7 +90,7 @@ export class UserService {
       middleName: user.student.middleName,
       lastName: user.student.lastName,
     }
-    await this.authService.verify(id, user.telegramId, {groupId, isCaptain, ...student})
+    await this.authService.verify(user, {groupId, isCaptain, ...student})
   }
 
   async deleteUser(userId: string) {
