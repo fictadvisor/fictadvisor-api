@@ -169,7 +169,7 @@ export class DisciplineTeacherService {
   }
 
   async getPollTimeBorders () {
-    const { year, semester } = await this.dateService.getCurrentYearAndSemester();
+    const { year, semester } = await this.dateService.getCurrentYear_Semester_StartDate();
     const startPoll = await this.dateService.getDateVar(`START_POLL_${year}_${semester}`);
     const endPoll = await this.dateService.getDateVar(`END_POLL_${year}_${semester}`);
     return {
