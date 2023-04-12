@@ -153,7 +153,6 @@ export class DisciplineTeacherRepository {
       select: {
         id: true,
         name: true,
-        order: true,
         category: true,
         criteria: true,
         isRequired: true,
@@ -161,6 +160,9 @@ export class DisciplineTeacherRepository {
         type: true,
         description: true,
         display: true,
+      },
+      orderBy: {
+        order: 'asc',
       },
     });
   }
