@@ -184,7 +184,7 @@ export class RozParser implements Parser {
 
   async getTeacherFullInitials (lastName, firstName, middleName) {
     if (firstName.length <= 1 || middleName.length <= 1) {
-      const teachers = await this.prisma.teacher.findMany({
+      const teachers = await this.teacherRepository.findMany({
         where: { lastName, firstName: { startsWith: firstName }, middleName: { startsWith: middleName } },
       });
 
