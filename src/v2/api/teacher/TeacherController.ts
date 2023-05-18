@@ -9,8 +9,8 @@ import { UpdateContactDTO } from '../user/dto/UpdateContactDTO';
 import { Access } from 'src/v2/security/Access';
 import { TeacherByIdPipe } from './pipe/TeacherByIdPipe';
 import { ContactByNamePipe } from './pipe/ContactByNamePipe';
-import { MarksQueryDTO } from './query/MarksQueryDTO';
 import { SubjectByIdPipe } from '../subject/SubjectByIdPipe';
+import { ResponseQueryDTO } from './query/ResponseQueryDTO';
 
 @Controller({
   version: '2',
@@ -136,8 +136,16 @@ export class TeacherController {
   @Get('/:teacherId/marks')
   async getMarks (
     @Param('teacherId', TeacherByIdPipe) teacherId: string,
-    @Query() query: MarksQueryDTO,
+    @Query() query: ResponseQueryDTO,
   ) {
     return this.teacherService.getMarks(teacherId, query);
+  }
+
+  @Get('/:teacherId/comments')
+  async getComments (
+    @Param('teacherId', TeacherByIdPipe) teacherId: string,
+    @Query() query: ResponseQueryDTO,
+  ) {
+    return this.teacherService.getComments(teacherId, query);
   }
 }

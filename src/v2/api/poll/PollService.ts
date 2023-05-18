@@ -5,7 +5,7 @@ import { QuestionType, State, TeacherRole } from '@prisma/client';
 import { StudentRepository } from '../user/StudentRepository';
 import { DisciplineService } from '../discipline/DisciplineService';
 import { UpdateQuestionWithRolesDTO } from './dto/UpdateQuestionWithRolesDTO';
-import { MarksData } from '../teacher/data/MarksData';
+import { ResponseData } from '../teacher/data/ResponseData';
 import { CreateQuestionRoleDTO } from './dto/CreateQuestionRoleDTO';
 import { DbQuestionWithAnswers } from './DbQuestionWithAnswers';
 import { NoPermissionException } from '../../utils/exceptions/NoPermissionException';
@@ -76,7 +76,7 @@ export class PollService {
     }) as unknown as Promise<DbQuestionWithRoles[]>;
   }
 
-  async getQuestionWithMarks (teacherId: string, data?: MarksData): Promise<DbQuestionWithAnswers[]> {
+  async getQuestionWithMarks (teacherId: string, data?: ResponseData): Promise<DbQuestionWithAnswers[]> {
     return await this.questionRepository.findMany({
       where: {
         OR: [{
@@ -98,6 +98,26 @@ export class PollService {
         },
       },
     }) as unknown as Promise<DbQuestionWithAnswers[]>;
+  }
+
+  async getQuestionWithText (teacherId: string, data?: ResponseData): Promise<DbQuestionWithAnswers> {
+    return await this.questionRepository.find({
+      where: {
+        type: QuestionType.TEXT,
+      },
+      include: {
+        questionAnswers: {
+          where: {
+            disciplineTeacher: {
+              teacherId,
+              discipline: {
+                ...data,
+              },
+            },
+          },
+        },
+      },
+    }) as unknown as Promise<DbQuestionWithAnswers>;
   }
 
   async getQuestionById (id: string) {
