@@ -22,16 +22,6 @@ export class QuestionRepository {
     });
   }
 
-  async find (data: Prisma.QuestionFindFirstArgs) {
-    return this.prisma.question.findFirst({
-      include: this.include,
-      ...data,
-      orderBy: {
-        order: 'asc',
-      },
-    });
-  }
-
   async findById (id: string) {
     return this.prisma.question.findUnique({
       where: {
