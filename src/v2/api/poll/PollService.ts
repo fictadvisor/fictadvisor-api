@@ -15,6 +15,7 @@ import { DateService } from '../../utils/date/DateService';
 import { DisciplineRepository } from '../discipline/DisciplineRepository';
 import { DbQuestionWithRoles } from './DbQuestionWithRoles';
 import { QuestionAnswerRepository } from './QuestionAnswerRepository';
+import { DbQuestionWithDiscipline } from './DbQuestionWithDiscipline';
 
 @Injectable()
 export class PollService {
@@ -100,8 +101,8 @@ export class PollService {
     }) as unknown as Promise<DbQuestionWithAnswers[]>;
   }
 
-  async getQuestionWithText (teacherId: string, data?: ResponseData): Promise<DbQuestionWithAnswers> {
-    return await this.questionRepository.find({
+  async getQuestionWithText (teacherId: string, data?: ResponseData): Promise<DbQuestionWithDiscipline[]> {
+    return await this.questionRepository.findMany({
       where: {
         type: QuestionType.TEXT,
       },
@@ -115,9 +116,20 @@ export class PollService {
               },
             },
           },
+          include: {
+            disciplineTeacher: {
+              include: {
+                discipline: {
+                  include: {
+                    subject: true,
+                  },
+                },
+              },
+            },
+          },
         },
       },
-    }) as unknown as Promise<DbQuestionWithAnswers>;
+    }) as unknown as Promise<DbQuestionWithDiscipline[]>;
   }
 
   async getQuestionById (id: string) {
