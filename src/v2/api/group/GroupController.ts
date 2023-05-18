@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Request } fro
 import { GroupService } from './GroupService';
 import { CreateGroupDTO } from './dto/CreateGroupDTO';
 import { GroupByIdPipe } from './pipe/GroupByIdPipe';
-import { Group } from '@prisma/client';
 import { EmailDTO } from './dto/EmailDTO';
 import { ApproveDTO } from '../user/dto/ApproveDTO';
 import { RoleDTO } from './dto/RoleDTO';
@@ -11,6 +10,7 @@ import { QueryAllDTO } from '../../utils/QueryAllDTO';
 import { UpdateGroupDTO } from './dto/UpdateGroupDTO';
 import { Access } from 'src/v2/security/Access';
 import { StudentMapper } from '../user/StudentMapper';
+import { GroupByCaptainPipe } from './pipe/GroupByCaptainPipe';
 
 @Controller({
   version: '2',
@@ -38,13 +38,13 @@ export class GroupController {
 
   @Get('/:groupId')
   get (
-    @Param('groupId', GroupByIdPipe) group: Group
+    @Param('groupId', GroupByIdPipe) groupId: string
   ) {
-    return group;
+    return this.groupService.get(groupId);
   }
 
   @Access('groups.update')
-  @Patch()
+  @Patch('/:groupId')
   async update (
     @Param('groupId', GroupByIdPipe) groupId: string,
     @Body() body: UpdateGroupDTO,
@@ -73,7 +73,7 @@ export class GroupController {
   @Access('groups.$groupId.captain.get')
   @Get('/:groupId/captain')
   async getCaptain (
-    @Param('groupId', GroupByIdPipe) groupId: string,
+    @Param('groupId', GroupByCaptainPipe) groupId: string,
   ) {
     return this.groupService.getCaptain(groupId);
   }
