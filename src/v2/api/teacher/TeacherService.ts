@@ -221,26 +221,6 @@ export class TeacherService {
 
   async getComments (teacherId: string, data?: ResponseQueryDTO) {
     this.checkQueryDate(data);
-    const questions = await this.pollService.getQuestionWithText(teacherId, data);
-    const responses = { 
-      questions: [],
-    };
-    for (const question of questions) {
-      if (question.questionAnswers.length === 0) continue;
-      responses.questions.push({
-        name: question.name,
-        amount: question.questionAnswers.length,
-        comments: [],
-      });
-      for (const answer of question.questionAnswers) {
-        responses.questions.at(-1).comments.push({
-          discipline: answer.disciplineTeacher.discipline.subject.name,
-          semester: answer.disciplineTeacher.discipline.semester,
-          year: answer.disciplineTeacher.discipline.year,
-          comment: answer.value,
-        });
-      }
-    }
-    return responses;
+    return await this.pollService.getQuestionWithText(teacherId, data);
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DbTeacher } from './DbTeacher';
 import { TeacherRole } from '@prisma/client';
+import { DbQuestionWithDiscipline } from '../poll/DbQuestionWithDiscipline';
 
 @Injectable()
 export class TeacherMapper {
@@ -44,5 +45,28 @@ export class TeacherMapper {
         roles: this.getRoles(dbTeacher),
       };
     });
+  }
+
+  getComments (responses: DbQuestionWithDiscipline[]) {
+    const comments = { 
+      questions: [],
+    };
+    for (const question of responses) {
+      if (question.questionAnswers.length === 0) continue;
+      comments.questions.push({
+        name: question.name,
+        amount: question.questionAnswers.length,
+        comments: [],
+      });
+      for (const answer of question.questionAnswers) {
+        comments.questions.at(-1).comments.push({
+          discipline: answer.disciplineTeacher.discipline.subject.name,
+          semester: answer.disciplineTeacher.discipline.semester,
+          year: answer.disciplineTeacher.discipline.year,
+          comment: answer.value,
+        });
+      }
+    }
+    return comments;
   }
 }
