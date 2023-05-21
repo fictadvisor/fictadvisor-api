@@ -146,6 +146,7 @@ export class TeacherController {
     @Param('teacherId', TeacherByIdPipe) teacherId: string,
     @Query() query: ResponseQueryDTO,
   ) {
-    return this.teacherService.getComments(teacherId, query);
+    const responces = await this.teacherService.getComments(teacherId, query);
+    return this.teacherMapper.getComments(responces);
   }
 }
