@@ -11,6 +11,8 @@ import { TeacherByIdPipe } from './pipe/TeacherByIdPipe';
 import { ContactByNamePipe } from './pipe/ContactByNamePipe';
 import { SubjectByIdPipe } from '../subject/SubjectByIdPipe';
 import { ResponseQueryDTO } from './query/ResponseQueryDTO';
+import { PollService } from '../poll/PollService';
+import { QuestionMapper } from '../poll/QuestionMapper';
 
 @Controller({
   version: '2',
@@ -20,6 +22,8 @@ export class TeacherController {
   constructor (
     private teacherService: TeacherService,
     private teacherMapper: TeacherMapper,
+    private pollService: PollService,
+    private questionMapper: QuestionMapper,
   ) {}
 
 
@@ -146,7 +150,8 @@ export class TeacherController {
     @Param('teacherId', TeacherByIdPipe) teacherId: string,
     @Query() query: ResponseQueryDTO,
   ) {
-    const responces = await this.teacherService.getComments(teacherId, query);
-    return this.teacherMapper.getComments(responces);
+    this.teacherService.checkQueryDate(query);
+    const questions = await this.pollService.getQuestionWithText(teacherId, query);
+    return this.questionMapper.getQuestionWithResponses(questions);
   }
 }

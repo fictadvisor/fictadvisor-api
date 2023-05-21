@@ -218,9 +218,4 @@ export class TeacherService {
       contacts,
     };
   }
-
-  async getComments (teacherId: string, data?: ResponseQueryDTO) {
-    this.checkQueryDate(data);
-    return await this.pollService.getQuestionWithText(teacherId, data);
-  }
 }
