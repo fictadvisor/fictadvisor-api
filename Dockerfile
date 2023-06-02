@@ -2,25 +2,27 @@
 # BUILD FOR PRODUCTION
 ###################
 
-FROM node:18-alpine3.16 as build
+FROM node:18-alpine3.17 As build
 
 WORKDIR /app
 
-COPY . .
+COPY . ./
 
-RUN yarn install
-
-RUN yarn build
+RUN yarn install --prod && \
+    yarn add @vercel/ncc && \
+    yarn ncc build src/main.ts -o dist
 
 ###################
 # PRODUCTION
 ###################
 
-FROM node:18-alpine3.16 as production
+FROM alpine:3.17 as production
 
-RUN yarn install --prod
+# Upgrade APK
+RUN apk --no-cache add -U \
+    nodejs~18 \
+    dumb-init
 
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/dist/ ./app
 
-CMD [ "node", "dist/main.js" ]
-
+CMD [ "dumb-init", "node", "app/index.js" ]
