@@ -20,7 +20,6 @@ import { UserRepository } from '../../database/repositories/UserRepository';
 import { NoPermissionException } from '../../utils/exceptions/NoPermissionException';
 import { QuestionMapper } from '../../mappers/QuestionMapper';
 import { DbQuestionWithRoles } from '../../database/entities/DbQuestionWithRoles';
-import { DatabaseUtils } from '../../database/DatabaseUtils';
 
 @Injectable()
 export class DisciplineTeacherService {
