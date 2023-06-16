@@ -57,7 +57,7 @@ export class TeacherController {
     return { subjects };
   }
 
-  @Access('user.$userId.disciplineTeachers.$teacherId.get')
+  @Access('users.$userId.teachers.$teacherId.disciplines.get')
   @Get('/:teacherId/disciplines')
   async getDisciplines (
     @Param('teacherId', TeacherByIdPipe) teacherId: string,
@@ -156,7 +156,8 @@ export class TeacherController {
     @Param('teacherId', TeacherByIdPipe) teacherId: string,
     @Query() query: ResponseQueryDTO,
   ) {
-    return this.teacherService.getMarks(teacherId, query);
+    const marks = await this.teacherService.getMarks(teacherId, query);
+    return { marks };
   }
 
   @Get('/:teacherId/comments')
