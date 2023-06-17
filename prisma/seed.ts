@@ -13,16 +13,15 @@ async function main () {
 
   await prisma.startDate.createMany({
     data: [
-      { year: 2022, semester: 1, startDate: new Date('2023-09-10T00:00:00') },
+      { year: 2022, semester: 1, startDate: new Date('2022-09-10T00:00:00') },
       { year: 2023, semester: 2, startDate: new Date('2023-02-10T00:00:00') },
     ],
   });
 
-  //poll borders
   await prisma.dateVar.createMany({
     data: [
-      { name: 'START_POLL_2023_2', date: new Date('2023-05-10T00:00:00') },
-      { name: 'END_POLL_2023_2', date: new Date('2023-05-30T00:00:00') },
+      { name: 'START_POLL_2023_2', date: new Date('2023-05-10T00:00:00.000Z') },
+      { name: 'END_POLL_2023_2', date: new Date('2023-05-30T00:00:00.000Z') },
     ],
   });
 
@@ -51,29 +50,40 @@ async function main () {
     },
   });
 
-  await prisma.disciplineType.create({
-    data: {
-      id: 'ec7866e2-a426-4e1b-b76c-1ce68fdb46a1',
-      disciplineId: '5aa663a0-0ae7-11ee-be56-0242ac120002',
-      name: 'LECTURE',
-    },
+  await prisma.user.createMany({
+    data: [
+      {
+        id: '8b17aad1-aa37-4d7d-986a-caf178c5fd6b',
+        email: 'polnoegovno@gmail.com',
+      },
+      {
+        id: '64635595-6733-4a8c-b6c3-c5ee93dd197a',
+        email: 'kpihuinya@gmail.com',
+        state: State.APPROVED,
+      },
+      {
+        id: 'b95546bb-daaa-47ff-8a27-1af3b57bf678',
+        email: 'kpicruto@gmail.com',
+        state: State.APPROVED,
+      },
+      {
+        id: '24d96791-cbc8-4380-8662-72ba9fef5da6',
+        email: 'kpipohui@gmail.com',
+        state: State.APPROVED,
+      },
+      {
+        id: 'aefac287-140c-4a06-a4b3-fbd30f5ccc43',
+        email: 'kpinepohui@gmail.com',
+        state: State.APPROVED,
+      },
+      {
+        id: '2d0860dc-d1f0-41cb-ac04-5109833bf562',
+        email: 'kpineeepohui@gmail.com',
+        state: State.APPROVED,
+      },
+    ],
   });
 
-  await prisma.disciplineTeacher.create({
-    data: {
-      id: 'f79d1af4-0ae8-11ee-be56-0242ac120002',
-      teacherId: '3b3812ca-0ae7-11ee-be56-0242ac120002a',
-      disciplineId: '5aa663a0-0ae7-11ee-be56-0242ac120002',
-    },
-  });
-
-  await prisma.disciplineTeacherRole.create({
-    data: {
-      disciplineTeacherId: 'f79d1af4-0ae8-11ee-be56-0242ac120002',
-      disciplineTypeId: 'ec7866e2-a426-4e1b-b76c-1ce68fdb46a1',
-      role: 'LECTURER',
-    },
-  });
 
   await prisma.question.createMany({
     data: [
@@ -136,25 +146,9 @@ async function main () {
       { role: 'LECTURER', questionId: '7ae61256-0aeb-11ee-be56-0242ac120002', isShown: true, isRequired: true },
       { role: 'LECTURER', questionId: '7d26fbe8-0aeb-11ee-be56-0242ac120002', isShown: true, isRequired: false },
       { role: 'PRACTICIAN', questionId: '7f9b0c8e-0aeb-11ee-be56-0242ac120002', isShown: false, isRequired: false },
-      { role: 'LECTURER', questionId: '844a1d7e-0aeb-11ee-be56-0242ac120002', isShown: true, isRequired: true },
+      { role: 'LECTURER', questionId: '844a1d7e-0aeb-11ee-be56-0242ac120002', isShown: true, isRequired: false },
     ],
   });
-
-  await prisma.user.createMany({
-    data: [
-      {
-        id: '8b17aad1-aa37-4d7d-986a-caf178c5fd6b',
-        email: 'polnoegovno@gmail.com',
-      },
-      {
-        id: '64635595-6733-4a8c-b6c3-c5ee93dd197a',
-        email: 'ipsa@gmail.com',
-        state: State.APPROVED,
-      },
-    ],
-  });
-
-
 
   console.log('Finished seeding');
 }

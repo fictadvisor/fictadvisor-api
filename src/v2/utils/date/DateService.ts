@@ -46,7 +46,7 @@ export class DateService {
   }
 
   async getDateVar (name: string): Promise<Date> {
-    const { date } = await this.prisma.dateVar.findUnique({
+    const { date } = await this.prisma.dateVar.findFirst({
       where: {
         name,
       },
