@@ -42,7 +42,7 @@ export class TeacherService {
         ...DatabaseUtils.getSearch({ search } as SearchDTO, 'firstName', 'lastName', 'middleName'),
       })),
     };
-    const sort = DatabaseUtils.getSort(body);
+    const sort = DatabaseUtils.getSort(body, 'lastName');
 
     const data: Prisma.TeacherFindManyArgs = {
       where: {
