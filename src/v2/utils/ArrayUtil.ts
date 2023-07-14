@@ -6,3 +6,11 @@ export async function filterAsync<T> (array: T[], callback: (item: T) => Promise
   const booleans = await Promise.all(array.map(callback));
   return array.filter((item, i) => booleans[i]);
 }
+
+export function some<T, K extends keyof T> (objs: Array<T>, field: K, comp: any): boolean {
+  return objs.some((obj) => obj[field] === comp);
+}
+
+export function find <T, K extends keyof T> (objs: Array<T>, field: K, comp: any): T | undefined {
+  return objs.find((obj) => obj[field] === comp);
+}
