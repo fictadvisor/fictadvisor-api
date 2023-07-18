@@ -18,7 +18,14 @@ import { GroupBySemesterLessonGuard } from '../../security/group-guard/GroupBySe
 import { GroupByTemporaryLessonGuard } from '../../security/group-guard/GroupByTemporaryLessonGuard';
 import { ScheduleMapper } from '../../mappers/ScheduleMapper';
 import { Access } from '../../security/Access';
-import { ApiBadRequestResponse, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth, ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { GeneralEventResponse } from '../responses/GeneralEventResponse';
 
 @ApiTags('Schedule')
@@ -34,18 +41,42 @@ export class ScheduleController {
   ) {}
 
   @Access('schedule.parse')
+  @ApiBearerAuth()
   @Post('/parse')
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse({
+    description: `\n
+    UnauthorizedException:
+      Unauthorized`,
+  })
+  @ApiQuery({
+    name: 'parser',
+    enum: ['schedule', 'rozkpi'],
+  })
+  @ApiQuery({
+    name: 'semester',
+    enum: [1, 2],
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'groups',
+    required: false,
+  })
   async parse (
     @Query('parser') parser: string,
     @Query('page') page: string,
     @Query('year', ParseIntPipe) year: number,
     @Query('semester', ParseIntPipe) semester: number,
+    @Query('groups') groups: string,
   ) {
     const period = {
       year,
       semester,
     };
-    return this.scheduleService.parse(parser, +page, period);
+    return this.scheduleService.parse(parser, page, period, groups);
   }
 
   @Get('/groups/:groupId/static')
