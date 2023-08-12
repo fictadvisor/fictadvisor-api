@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -230,5 +230,33 @@ export class ScheduleController {
       events: this.scheduleMapper.getEvents(result.events),
       week: result.week,
     };
+  }
+
+  @Access('groups.$groupId.events.delete')
+  @Delete('/events/:eventId')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    type: EventResponse,
+  })
+  @ApiBadRequestResponse({
+    description: `\n
+    InvalidEntityIdException: 
+      Event with such id is not found`,
+  })
+  @ApiUnauthorizedResponse({
+    description: `\n
+    UnauthorizedException:
+      Unauthorized`,
+  })
+  @ApiForbiddenResponse({
+    description: `\n
+    NoPermissionException:
+      You do not have permission to perform this action`,
+  })
+  async deleteEvent (
+    @Param('eventId', EventByIdPipe) id: string,
+  ) {
+    const result = await this.scheduleService.deleteEvent(id);
+    return this.scheduleMapper.getEvent(result.event, result.discipline);
   }
 }
