@@ -143,6 +143,17 @@ export class AuthController {
     return this.authService.refresh(req.user);
   }
 
+  @ApiOkResponse({
+    type: AuthLoginResponse,
+  })
+  @ApiBadRequestResponse({
+    description: `\n
+                  InvalidEntityIdException:
+                    Entity with such id is not found
+                    
+                  PasswordRepeatException:
+                    The passwords are the same`,
+  })
   @UseGuards(JwtGuard)
   @Put('/updatePassword')
   async updatePassword (
@@ -152,6 +163,9 @@ export class AuthController {
     return this.authService.updatePassword(body, req.user);
   }
 
+  @ApiOkResponse({
+    type: AuthLoginResponse,
+  })
   @UseGuards(JwtGuard)
   @Get('/me')
   getMe (
@@ -160,6 +174,17 @@ export class AuthController {
     return this.userService.getUser(req.user.id);
   }
 
+  @ApiOkResponse()
+  @ApiBadRequestResponse({
+    description: `\n
+                  NotRegisteredException:
+                    This email is not registered yet`,
+  })
+  @ApiTooManyRequestsResponse({
+    description: `\n
+                  TooManyActionsException:
+                    Too many actions. Try later`,
+  })
   @Post('/forgotPassword')
   async forgotPassword (
     @Body() body: ForgotPasswordDTO,
@@ -167,6 +192,12 @@ export class AuthController {
     return this.authService.forgotPassword(body.email);
   }
 
+  @ApiOkResponse()
+  @ApiBadRequestResponse({
+    description: `\n
+                  InvalidResetTokenException:
+                    Reset token is expired or invalid`,
+  })
   @Post('/resetPassword/:token')
   async resetPassword (
     @Param('token') token: string,
@@ -175,6 +206,12 @@ export class AuthController {
     return this.authService.resetPassword(token, body);
   }
 
+  @ApiOkResponse()
+  @ApiBadRequestResponse({
+    description: `\n
+                  NotRegisteredException:
+                    This email is not registered yet`,
+  })
   @Post('/register/verifyEmail')
   requestEmailVerification (
     @Body() body: VerificationEmailDTO,
