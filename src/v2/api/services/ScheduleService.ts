@@ -153,6 +153,39 @@ export class ScheduleService {
     };
   }
 
+  async getGeneralFortnightEvents (id, fortnight) {
+    const { startOfFortnight, endOfFortnight } = fortnight ?
+      await this.dateService.getDatesOfFortnight(fortnight) :
+      await this.dateService.getDatesOfCurrentFortnight();
+
+    const events = await this.eventRepository.findMany({
+      where: {
+        groupId: id,
+        startTime: {
+          lte: endOfFortnight,
+        },
+        endTime: {
+          gte: startOfFortnight,
+        },
+        lessons: {
+          some: {
+            disciplineType: {
+              name: {
+                in: [DisciplineTypeEnum.LECTURE, DisciplineTypeEnum.PRACTICE, DisciplineTypeEnum.LABORATORY],
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        startTime: 'asc',
+      },
+    }) as unknown as DbEvent[];
+
+
+    return events;
+  }
+
   async getEvent (id: string, week: number): Promise<{ event: DbEvent, discipline: DbDiscipline }> {
     if (!week) {
       throw new InvalidWeekException();

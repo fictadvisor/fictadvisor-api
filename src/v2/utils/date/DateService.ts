@@ -144,6 +144,35 @@ export class DateService {
     return { startOfWeek, endOfWeek };
   }
 
+  async getDatesOfCurrentFortnight () {
+    const { startOfWeek, endOfWeek } = this.getDatesOfCurrentWeek();
+    const currentWeek = await this.getCurrentWeek();
+    const isOdd = currentWeek % 2 !== 0;
+
+    let startOfFortnight;
+    let endOfFortnight;
+
+    if (isOdd) {
+      startOfFortnight = startOfWeek;
+      endOfFortnight = new Date(endOfWeek.getTime() + WEEK);
+    } else {
+      startOfFortnight = new Date(startOfWeek.getTime() - WEEK);
+      endOfFortnight = endOfWeek;
+    }
+
+    return { startOfFortnight, endOfFortnight };
+  }
+
+  async getDatesOfFortnight (fortnight) {
+    const { startOfFortnight, endOfFortnight } = await this.getDatesOfCurrentFortnight();
+    const currentDate = await this.getCurrentDay();
+    const difference = fortnight - currentDate.fortnight;
+    startOfFortnight.setDate(startOfFortnight.getDate() + difference * 14);
+    endOfFortnight.setDate(endOfFortnight.getDate() + difference * 14);
+
+    return { startOfFortnight, endOfFortnight };
+  }
+  
   async isPreviousSemesterToCurrent (semester: number, year: number) {
     const curSemester = await this.getCurrentSemester();
 

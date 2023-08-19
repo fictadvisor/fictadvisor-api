@@ -15,3 +15,10 @@ export class EventsResponse {
   @ApiProperty()
     startTime: Date;
 }
+
+export class FortnightEventsResponse {
+  @ApiProperty({
+    type: [MainEventInfoResponse],
+  })
+    events: MainEventInfoResponse[];
+}

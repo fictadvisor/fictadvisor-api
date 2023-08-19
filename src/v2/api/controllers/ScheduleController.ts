@@ -26,7 +26,7 @@ import { CreateEventDTO } from '../dtos/CreateEventDTO';
 import { EventResponse } from '../responses/EventResponse';
 import { EventByIdPipe } from '../pipes/EventByIdPipe';
 import { GroupByEventGuard } from '../../security/group-guard/GroupByEventGuard';
-import { EventsResponse } from '../responses/EventsResponse';
+import { EventsResponse, FortnightEventsResponse } from '../responses/EventsResponse';
 import { TelegramGuard } from '../../security/TelegramGuard';
 import { EventFiltrationDTO } from '../dtos/EventFiltrationDTO';
 import { GeneralEventFiltrationDTO } from '../dtos/GeneralEventFiltrationDTO';
@@ -153,6 +153,37 @@ export class ScheduleController {
     const result = await this.scheduleService.getGeneralGroupEventsByDay(id, day);
     return {
       events: this.scheduleMapper.getEvents(result.events),
+    };
+  }
+
+  @ApiBearerAuth()
+  @ApiQuery({
+    name: 'fortnight',
+    required: false,
+  })
+  @ApiOkResponse({
+    type: FortnightEventsResponse,
+  })
+  @ApiBadRequestResponse({
+    description: `\n
+    InvalidGroupIdException:
+      Group with such id is not found`,
+  })
+  @ApiUnauthorizedResponse({
+    description: `\n
+    UnauthorizedException:
+      Unauthorized`,
+  })
+  @UseGuards(TelegramGuard)
+  @Get('/groups/:groupId/general/fortnight')
+  async getGeneralFortnightEvents (
+    @Param('groupId', GroupByIdPipe) id: string,
+    @Query('fortnight') fortnight: number,
+  ) {
+    const events = await this.scheduleService.getGeneralFortnightEvents(id, fortnight);
+
+    return {
+      events: this.scheduleMapper.getEvents(events),
     };
   }
 
