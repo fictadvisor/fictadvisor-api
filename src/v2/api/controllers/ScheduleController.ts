@@ -26,7 +26,7 @@ import { CreateEventDTO } from '../dtos/CreateEventDTO';
 import { EventResponse } from '../responses/EventResponse';
 import { EventByIdPipe } from '../pipes/EventByIdPipe';
 import { GroupByEventGuard } from '../../security/group-guard/GroupByEventGuard';
-import { EventsResponse } from '../responses/EventsResponse';
+import { EventsResponse, GeneralEventsResponse } from '../responses/EventsResponse';
 import { TelegramGuard } from '../../security/TelegramGuard';
 import { EventFiltrationDTO } from '../dtos/EventFiltrationDTO';
 import { GeneralEventFiltrationDTO } from '../dtos/GeneralEventFiltrationDTO';
@@ -89,7 +89,7 @@ export class ScheduleController {
     required: false,
   })
   @ApiOkResponse({
-    type: EventsResponse,
+    type: GeneralEventsResponse,
   })
   @ApiBadRequestResponse({
     description: `\n
@@ -123,7 +123,7 @@ export class ScheduleController {
     required: false,
   })
   @ApiOkResponse({
-    type: EventsResponse,
+    type: GeneralEventsResponse,
   })
   @ApiBadRequestResponse({
     description: `\n
