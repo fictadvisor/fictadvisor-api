@@ -24,7 +24,7 @@ export class TelegramDTO {
     last_name: string;
 
   @ApiProperty()
-  @IsNotEmpty(validationOptionsMsg('photo_url can not be empty'))
+  @IsNotEmpty()
     photo_url: string;
 
   @ApiProperty()
