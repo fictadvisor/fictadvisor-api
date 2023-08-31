@@ -344,9 +344,7 @@ export class ScheduleService {
     }
 
     for (const event of result) {
-      if (event.period !== Period.NO_PERIOD) {
-        await this.setWeekTime(event, week);
-      }
+      await this.setWeekTime(event, week);
     }
 
     return result;
@@ -438,7 +436,7 @@ export class ScheduleService {
     } = body;
 
     let startTime = durationTime.startTime ?? event.startTime;
-    if (!durationTime.startTime && durationTime.changeStartDate) throw new ObjectIsRequiredException('startTime is required');
+    if (!durationTime.startTime && durationTime.changeStartDate) throw new ObjectIsRequiredException('startTime');
     if (durationTime.startTime && !durationTime.changeStartDate) {
       startTime = event.startTime;
       startTime.setHours(durationTime.startTime.getHours());
@@ -446,7 +444,7 @@ export class ScheduleService {
     }
 
     let endTime = durationTime.endTime ?? event.endTime;
-    if (!durationTime.endTime && durationTime.changeEndDate) throw new ObjectIsRequiredException('endTime is required');
+    if (!durationTime.endTime && durationTime.changeEndDate) throw new ObjectIsRequiredException('endTime');
     if (durationTime.endTime && !durationTime.changeEndDate) {
       endTime = event.endTime;
       endTime.setHours(durationTime.endTime.getHours());
@@ -466,7 +464,7 @@ export class ScheduleService {
 
     const lesson = event?.lessons[0];
     if (!disciplineId && !disciplineType && !teachers && !disciplineInfo) return;
-    if ((!disciplineId || !disciplineType) && !lesson) throw new ObjectIsRequiredException('disciplineType is required');
+    if ((!disciplineId || !disciplineType) && !lesson) throw new ObjectIsRequiredException('disciplineType');
 
     const discipline = await this.updateDiscipline(
       disciplineId,
