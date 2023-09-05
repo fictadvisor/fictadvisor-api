@@ -17,6 +17,14 @@ import { DateModule } from '../utils/date/DateModule';
   controllers: [UserController, RoleController, GrantController],
   providers: [UserService, RoleService, GrantService],
   exports: [UserService, RoleService, GrantService],
-  imports: [ConfigurationModule, forwardRef(() => GroupModule), AccessModule, forwardRef(() => AuthModule), MapperModule, FileModule, DateModule],
+  imports: [
+    ConfigurationModule,
+    forwardRef(() => GroupModule),
+    AccessModule,
+    forwardRef(() => AuthModule),
+    MapperModule,
+    FileModule,
+    DateModule,
+  ],
 })
 export class UserModule {}
