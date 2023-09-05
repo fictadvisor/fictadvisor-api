@@ -49,6 +49,31 @@ const ROLE_LIST = [
   },
 ];
 
+function calculateRoleWeight (role) {
+  let totalWeight = 0;
+  for (const grant in role.grants) {
+    if (grant in permissionWeights) {
+      totalWeight = permissionWeights[grant];
+    } else {
+      totalWeight = 1;
+    }
+  }
+  return totalWeight;
+}
+
+const permissionWeights = {
+  'groups.4793690f-80c7-4a6b-b793-455dbde97f6a.*': 1,
+  'groups.4793690f-80c7-4a6b-b793-455dbde97f6a.admin.switch': 1,
+  'groups.8bbb47f9-cae8-44bc-8fb3-bf1edd7bde86.admin.switch': 2,
+  'groups.8bbb47f9-cae8-44bc-8fb3-bf1edd7bde86.students.*': 3,
+  'groups.8bbb47f9-cae8-44bc-8fb3-bf1edd7bde86.students.get': 4,
+  'groups.8bbb47f9-cae8-44bc-8fb3-bf1edd7bde86.*': 1,
+};
+
+ROLE_LIST.forEach((role) => {
+  role.weight = calculateRoleWeight(role);
+});
+
 @Injectable()
 export class GroupService {
   constructor (
