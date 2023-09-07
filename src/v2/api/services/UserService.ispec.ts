@@ -106,6 +106,11 @@ describe('UserService', () => {
           name: 'CAPTAIN',
           weight: 80,
         },
+        {
+          id: 'newStudentRoleId',
+          name: 'STUDENT',
+          weight: 50,
+        },
       ],
     });
 
@@ -118,6 +123,10 @@ describe('UserService', () => {
         {
           groupId: 'groupWithTransferredRolesId',
           roleId: 'captainRoleId',
+        },
+        {
+          groupId: 'newGroupId',
+          roleId: 'newStudentRoleId',
         },
       ],
     });
@@ -420,11 +429,11 @@ describe('UserService', () => {
             },
           }, {
             studentId: 'userWithSelectiveId',
-            roleId: 'ipCaptainId',
+            roleId: 'newStudentRoleId',
             role: {
-              id: 'ipCaptainId',
-              name: 'CAPTAIN',
-              weight: 80,
+              id: 'newStudentRoleId',
+              name: 'STUDENT',
+              weight: 50,
               parentId: null,
             },
           },
