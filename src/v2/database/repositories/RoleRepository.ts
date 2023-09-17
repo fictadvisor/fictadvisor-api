@@ -69,7 +69,7 @@ export class RoleRepository {
     });
   }
 
-  find (where: Prisma.RoleWhereInput) {
+  find (where: Prisma.RoleWhereInput): Promise<DbRole> {
     return this.prisma.role.findFirst({
       where,
       include: this.include,

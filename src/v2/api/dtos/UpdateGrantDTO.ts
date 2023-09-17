@@ -6,4 +6,7 @@ export class UpdateGrantDTO {
 
   @IsOptional()
     set?: boolean;
+
+  @IsOptional()
+    weight?: number;
 }

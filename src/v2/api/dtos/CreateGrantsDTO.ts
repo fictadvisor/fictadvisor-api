@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, ValidateNested } from 'class-validator';
 import { validationOptionsMsg } from '../../utils/GLOBALS';
 import { Type } from 'class-transformer';
 
@@ -14,6 +14,11 @@ export class CreateGrantDTO {
   @IsBoolean(validationOptionsMsg('Set is not a boolean'))
   @IsOptional()
     set?: boolean;
+
+  @ApiProperty()
+  @IsNumber({}, validationOptionsMsg('Weight is not a number'))
+  @IsNotEmpty(validationOptionsMsg('Weight can not be empty'))
+    weight: number;
 }
 
 export class CreateGrantsDTO {
