@@ -6,6 +6,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateQuestionRoleDTO {
   @ApiProperty({
     enum: TeacherRole,
+    description: 'Id of question`s role to create',
   })
   @IsEnum(TeacherRole)
   @IsNotEmpty(validationOptionsMsg('Role can not be empty'))

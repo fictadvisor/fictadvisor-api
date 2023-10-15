@@ -258,16 +258,16 @@ export class PollController {
   @ApiOkResponse({
     type: QuestionWithRolesResponse,
   })
-  @ApiUnauthorizedResponse({
-    description: `\n
-    UnauthorizedException:
-      Unauthorized`,
-  })
   @ApiBadRequestResponse({
     description: `\n
     InvalidEntityIdException:
       Question with such id is not found
       QuestionRole was not found`,
+  })
+  @ApiUnauthorizedResponse({
+    description: `\n
+    UnauthorizedException:
+      Unauthorized`,
   })
   @ApiForbiddenResponse({
     description: `\n
