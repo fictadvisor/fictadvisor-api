@@ -9,6 +9,7 @@ export class CreateQuestionWithRolesDTO extends CreateQuestionDTO {
   @Type(() => CreateQuestionRoleDTO)
     @ApiProperty({
       type: [CreateQuestionRoleDTO],
+      description: 'Role, that can be assigned the questions',
     })
     roles: CreateQuestionRoleDTO[];
 }

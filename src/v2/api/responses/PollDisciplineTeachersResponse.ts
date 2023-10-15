@@ -39,11 +39,14 @@ class DisciplineTeachers {
 
 export class PollDisciplineTeachersResponse {
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Id of teacher of poll`s discipline',
+  })
     hasSelectedInLastSemester:boolean;
 
   @ApiProperty({
     type: [DisciplineTeachers],
+    description: 'Id of discipline',
   })
     teachers: DisciplineTeachers[];
 }
