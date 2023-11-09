@@ -39,12 +39,15 @@ export class TeacherResponse {
 }
 
 export class ExtendTeacherResponse extends TeacherResponse {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Teacher\'s id',
+  })
     disciplineTeacherId: string;
 
   @ApiProperty({
     type: [TeacherRole],
     enum: TeacherRole,
+    description: 'List of teacher\'s roles',
   })
     roles: TeacherRole[];
 }
