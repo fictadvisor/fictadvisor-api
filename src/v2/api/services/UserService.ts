@@ -66,9 +66,11 @@ export class UserService {
 
   async getSelective (studentId: string) {
     return this.disciplineRepository.findMany({
-      selectiveDisciplines: {
-        some: {
-          studentId,
+      where: {
+        selectiveDisciplines: {
+          some: {
+            studentId,
+          },
         },
       },
     });
@@ -468,10 +470,12 @@ export class UserService {
     }
 
     const disciplines = (await this.disciplineRepository.findMany({
-      semester: body.semester,
-      year: body.year,
-      isSelective: true,
-      groupId: group.id,
+      where: {
+        semester: body.semester,
+        year: body.year,
+        isSelective: true,
+        groupId: group.id,
+      },
     }))
       .map(({ id, subject: { name } }) => ({ disciplineId: id, subjectName: name }));
 
@@ -498,9 +502,11 @@ export class UserService {
 
   async getSelectiveDisciplines (userId: string) {
     return this.disciplineRepository.findMany({
-      selectiveDisciplines: {
-        some: {
-          studentId: userId,
+      where: {
+        selectiveDisciplines: {
+          some: {
+            studentId: userId,
+          },
         },
       },
     });
