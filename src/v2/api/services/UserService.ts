@@ -7,7 +7,7 @@ import { RoleRepository } from '../../database/repositories/RoleRepository';
 import { ContactRepository } from '../../database/repositories/ContactRepository';
 import { UpdateUserDTO } from '../dtos/UpdateUserDTO';
 import { CreateContactDTO } from '../dtos/CreateContactDTO';
-import { EntityType, RoleName, State } from '@prisma/client';
+import { EntityType, Prisma, RoleName, State } from '@prisma/client';
 import { UpdateContactDTO } from '../dtos/UpdateContactDTO';
 import { CreateSuperheroDTO } from '../dtos/CreateSuperheroDTO';
 import { AuthService, AVATARS } from './AuthService';
@@ -32,6 +32,9 @@ import { checkIfArrayIsUnique } from '../../utils/ArrayUtil';
 import { AlreadySelectedException } from '../../utils/exceptions/AlreadySelectedException';
 import { TelegramAPI } from '../../telegram/TelegramAPI';
 import { DuplicateTelegramIdException } from '../../utils/exceptions/DuplicateTelegramIdException';
+import { QueryAllUsersDTO } from '../dtos/QueryAllUsersDTO';
+import { DatabaseUtils } from '../../database/DatabaseUtils';
+import { DbUser } from '../../database/entities/DbUser';
 
 type SortedDisciplines = {
   year: number;
@@ -441,7 +444,7 @@ export class UserService {
   private async deleteAvatarIfNotUsed (avatar: string, oldPath: string) {
     const exist = this.fileService.checkFileExist(oldPath, false);
     if (exist) {
-      const users = await this.userRepository.findMany({ avatar });
+      const users = await this.userRepository.findMany({ where: { avatar } });
       if (users.length === 1) {
         await this.fileService.deleteFile(oldPath, false);
       }
@@ -576,5 +579,21 @@ export class UserService {
     this.checkAlreadySelectedDisciplines(body.disciplines, selectedDisciplines.map((d) => d.id));
     await this.checkExcessiveSelectiveDisciplines(sortedDisciplines, sortedSelectedDisciplines, groupId);
     await this.attachSelectiveDisciplines(userId, body.disciplines);
+  }
+
+  async getAll (query: QueryAllUsersDTO) {
+    const search = DatabaseUtils.getSearch(query, 'username', 'email');
+    const sort = DatabaseUtils.getSort(query, 'username');
+
+    const data: Prisma.UserFindManyArgs = {
+      where: {
+        ...search,
+        state: query.state?.length !== 0 ? {
+          in: query.state,
+        } : undefined,
+      },
+      ...sort,
+    };
+    return await DatabaseUtils.paginate<DbUser>(this.userRepository, query, data);
   }
 }
