@@ -93,4 +93,6 @@ export enum PERMISSION {
   TEACHERS_$TEACHERID_CONTACTS_CREATE = 'teachers.$teacherId.contacts.create',
   TEACHERS_$TEACHERID_CONTACTS_UPDATE = 'teachers.$teacherId.contacts.update',
   TEACHERS_$TEACHERID_CONTACTS_DELETE = 'teachers.$teacherId.contacts.delete',
+
+  ADMIN_USER_CREATE = 'admin.users.create',
 }
