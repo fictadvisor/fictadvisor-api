@@ -17,12 +17,17 @@ import {
   ApiBody,
   ApiForbiddenResponse,
   ApiOkResponse,
+  ApiParam,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DisciplineTeacherQuestionsResponse } from '../responses/DisciplineTeacherQuestionsResponse';
 import { QuestionAnswerResponse } from '../responses/QuestionAnswerResponse';
 import { DisciplineTeacherCreateResponse } from '../responses/DisciplineTeacherCreateResponse';
 import { CreateDisciplineTeacherDTO } from '../dtos/CreateDisciplineTeacherDTO';
+import { ApiEndpoint } from '../../utils/documentation/decorators';
+import { QuestionByIdPipe } from '../pipes/QuestionByIdPipe';
+import { UserByIdPipe } from '../pipes/UserByIdPipe';
 
 @ApiTags('DisciplineTeacher')
 @Controller({
@@ -253,5 +258,66 @@ export class DisciplineTeacherController {
     @Request() req,
   ) {
     return this.disciplineTeacherService.removeFromPoll(disciplineTeacherId, req.user.id);
+  }
+
+  @ApiBearerAuth()
+  @ApiOkResponse()
+  @ApiBadRequestResponse({
+    description: `\n
+    InvalidEntityIdException:
+      User with such id is not found
+      Question with such id is not found
+      DisciplineTeacher with such id is not found
+      
+    InvalidTypeException
+      Question has wrong type 
+    
+    InvalidBodyException:
+      UserId should not be empty
+      QuestionId should not be empty
+      Comment should not be empty
+      Comment must be a string`,
+  })
+  @ApiForbiddenResponse({
+    description: `
+      NoPermissionException: You do not have permission to perform this action
+    `,
+  })
+  @ApiUnauthorizedResponse({
+    description: `\n
+    UnauthorizedException:
+      Unauthorized`,
+  })
+  @ApiForbiddenResponse({
+    description: `\n
+    NoPermissionException:
+      You do not have permission to perform this action`,
+  })
+  @ApiParam({
+    name: 'questionId',
+    required: true,
+    description: 'Question Id',
+  })
+  @ApiParam({
+    name: 'disciplineTeacherId',
+    required: true,
+    description: 'Discipline teacher id',
+  })
+  @ApiParam({
+    name: 'userId',
+    required: true,
+    description: 'User id',
+  })
+  @ApiEndpoint({
+    summary: 'Delete question answers with TEXT type (comments)',
+    permissions: PERMISSION.COMMENTS_DELETE,
+  })
+  @Delete('/:questionId/:disciplineTeacherId/:userId/comment')
+  deleteComment(
+    @Param('questionId', QuestionByIdPipe) questionId: string,
+    @Param('disciplineTeacherId', DisciplineTeacherByIdPipe) disciplineTeacherId: string,
+    @Param('userId', UserByIdPipe) userId: string
+  ) {
+    return this.disciplineTeacherService.deleteComment(questionId, disciplineTeacherId, userId);
   }
 }

@@ -44,4 +44,10 @@ export class QuestionAnswerRepository {
       ...args,
     });
   }
+
+  delete(args: Prisma.QuestionAnswerDeleteArgs) {
+    return this.prisma.questionAnswer.delete({
+      ...args,
+    })
+  }
 }
